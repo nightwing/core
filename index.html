@@ -208,7 +208,7 @@
                             
                             var parts = to.split("/")
                             var toName = "!" + parts.pop();
-                            var toParent = findNode(parts.join("/"));
+                            var toParent = findNode(parts.join("/"), true);
                             
                             parts = from.split("/")
                             var fromName = "!" + parts.pop();
