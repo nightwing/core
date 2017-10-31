@@ -24,6 +24,9 @@ define(function(require, exports, module) {
             var emit = socket.getEmitter();
             var state, stream, connected, away;
             
+            if (proxy == false)
+                return socket;
+            
             if (typeof proxy == "string")
                 proxy = { source: proxy };
             
@@ -103,18 +106,21 @@ define(function(require, exports, module) {
                 }
                 else if (proxy.detach) {
                     proc.spawn(nodeBin, {
-                        args: ["-e", proxySource],
+                        args: proxy.args || ["-e", proxySource],
                         detached: true,
                         stdio: "ignore"
                     }, function(err, process) {
                         if (err)
                             return emit("error", err);
+                        // Make sure the process keeps running
+                        process.unref();
+                        
                         connectToPort();
                     });
                 }
                 else {
                     proc.spawn(nodeBin, {
-                        args: ["-e", proxySource]
+                        args: proxy.args || ["-e", proxySource]
                     }, function(err, process) {
                         if (err)
                             return emit("error", err);
